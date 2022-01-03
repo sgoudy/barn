@@ -1,4 +1,7 @@
 import * as React from 'react';
+import axios from 'axios';
+import Copyright from '../Copyright/index.js'
+import horses from '../Horses/horses.js'
 import {
     Avatar, 
     Button, 
@@ -16,31 +19,27 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import didi from '../../images/didi.jpg';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Shell Bee Was Here
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+const horseData = []
 
 const theme = createTheme();
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+
+    let name = ''
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+       
+        const horseList = horses;
+        horseList.forEach((horse)=>{
+            if (horse.email === data.get('email')){
+                horseData.push(horse)
+                name = data.get('email');
+                console.log(horse);
+            } 
+        })
+    };
 
   return (
     <ThemeProvider theme={theme}>
@@ -106,6 +105,7 @@ export default function SignIn() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                // href={`/horse/${name}`}
               >
                 Sign In
               </Button>
@@ -116,7 +116,7 @@ export default function SignIn() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="/sign-up" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
