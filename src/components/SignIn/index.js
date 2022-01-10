@@ -1,7 +1,10 @@
-import * as React from 'react';
+// import {useState} from 'react';
 import axios from 'axios';
+import Cookies from 'universal-cookie'
+import jwt from 'jwt-decode'
+import { useNavigate } from 'react-router-dom';
 import Copyright from '../Copyright/index.js'
-import horses from '../Horses/horses.js'
+
 import {
     Avatar, 
     Button, 
@@ -16,33 +19,61 @@ import {
     Typography,
 } from '@mui/material/';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import didi from '../../images/didi.jpg';
 
-const horseData = []
+const cookies = new Cookies()
 
-const theme = createTheme();
+const sessionExpires = Date.now() + 4320000 //milliseconds = 12 hours
 
 export default function SignIn() {
+    
+    const navigate = useNavigate();
 
-    let name = ''
+    const sendUserToHorsePage = person => {
+        cookies.set('boarder', person, { expires: new Date(sessionExpires) })
+        navigate(`/${person.id}/horse`)
+      }
+
+    const getPerson = (person) => {
+        axios.get(`http://localhost:5000/record/${person._id}`)
+        .then((res) => {
+            console.log(res.data.user)
+            sendUserToHorsePage(res.data.user)})
+        .catch(function (error) {
+            if (error.response) {
+                console.log(error.response);
+            }
+    })};
+    
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const data = new FormData(e.currentTarget);
-       
-        const horseList = horses;
-        horseList.forEach((horse)=>{
-            if (horse.email === data.get('email')){
-                horseData.push(horse)
-                name = data.get('email');
-                console.log(horse);
-            } 
-        })
-    };
+        const data = new FormData(e.currentTarget);  
+        axios.get("http://localhost:5000/record")
+        .then((res) => {
+            if (res.status !== 200) {
+                console.log(res.message)
+                // setInvalid(true)
+                // setErrorMessage(res.message)
+            } else {
+                let people = res.data;
+                people.forEach((person)=>{
+                    if (person.email === data.get('email') && person.password === data.get('password')){
+                        getPerson(person);
+                    } else {
+                        console.log('invalid')
+                    }
+                })
+                
+            }})
+        .catch(function (error) {
+            if (error.response) {
+                console.log(error.response);
+            }
+            })};
 
   return (
-    <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
@@ -126,6 +157,5 @@ export default function SignIn() {
           </Box>
         </Grid>
       </Grid>
-    </ThemeProvider>
   );
 }

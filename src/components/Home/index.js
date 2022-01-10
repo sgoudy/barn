@@ -11,33 +11,31 @@ import hs from '../../images/hs.jpg'
 
 export default function Home() {
     return (
-        <Grid container>
-        <Box
-            sx={{
-              my: 8,
-              mx: 4,
+        <Grid container sx={{
+              padding: 2,
               margin: 'auto',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              backgroundImage: `url(${hs})`,
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
               justifyContent: 'space-around',
               height: '100vh'
-            }}
-          >
-              <Typography variant="h2">
+            }}>
+        
+              <Typography align="center" variant="h2">
                     Canterbrook Stables
                 </Typography>
-                
+                <Box 
+                component="img"
+                src={hs} 
+                    sx={{
+                        maxHeight: 300,
+                        maxWidth: 300
+                        }}/>
                 <Button 
                     variant="contained" 
                     href="/sign-in">
                         Enter
-                </Button>  
-          </Box>
-           
+                </Button>             
         </Grid>
     )
 }

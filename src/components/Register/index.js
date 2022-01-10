@@ -1,7 +1,7 @@
 import axios from 'axios';
-import Cookies from 'universal-cookie'
+// import Cookies from 'universal-cookie'
 import { useNavigate } from 'react-router-dom';
-import jwt from 'jwt-decode'
+// import jwt from 'jwt-decode'
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,48 +16,59 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Copyright from '../Copyright/index.js'
 
 const theme = createTheme();
-const cookies = new Cookies()
+// const cookies = new Cookies()
 
-const sessionExpires = Date.now() + 4320000 //milliseconds = 12 hours
+// const sessionExpires = Date.now() + 4320000 //milliseconds = 12 hours
 
 
 export default function SignUp() {
     
     const navigate = useNavigate();
  
-    const sendUserToLibraryPage = user => {
-        const newUserToken = jwt.sign(user, 'be70416c-2bb4-11ec-8d3d-0242ac130003', {
-          expiresIn: '12h',
-        })
-        cookies.set('boarder', newUserToken, { expires: new Date(sessionExpires) })
-        navigate(`/horse/${user.id}`)
-      }
+    // const sendUserHome = user => {
+    //     const newUserToken = jwt.sign(user, 'be70416c-2bb4-11ec-8d3d-0242ac130003', {
+    //       expiresIn: '12h',
+    //     })
+    //     cookies.set('boarder', newUserToken, { expires: new Date(sessionExpires) })
+    //     navigate('/')
+    //   }
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         // eslint-disable-next-line no-console
         console.log({
-        email: data.get('email'),
-        password: data.get('password'),
+            first: data.get('firstName'),
+            last: data.get('lastName'),
+            email: data.get('email'),
+            password: data.get('password'),
         });
     
-
-        // When post request is sent to the create url, axios will add a new record(newperson) to the database.
         const person = {
-            name: data.get('email'),
+            first: data.get('firstName'),
+            last: data.get('lastName'),
+            email: data.get('email'),
             password: data.get('password')
         }
 
-    axios
+        axios
         .post("http://localhost:5000/record/add", person)
         .then((res) => {
-            if (res !== 200) {
+            if (res.status !== 200) {
+                console.log(res.message)
                 // setInvalid(true)
                 // setErrorMessage(res.message)
             } else {
-                sendUserToLibraryPage(res.user)
-            }});
+                navigate('/sign-in')
+                // sendUserHome(person)
+            }})
+        .catch(function (error) {
+            if (error.response) {
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            }
+            });
         }
 
   return (

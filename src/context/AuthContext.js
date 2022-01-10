@@ -1,16 +1,15 @@
 import Cookies from 'universal-cookie'
-import JWT from 'jwt-decode'
 import { createContext } from "react";
 
 const cookies = new Cookies()
+const AuthContext = createContext(null);
 
-export const AuthContext = createContext(null);
-
-export const AuthContextProvider = ({ children }) => {
+const AuthContextProvider = ({ children }) => {
   const userToken = cookies.get('boarder')
-  const decodedUser = userToken ? JWT(userToken) : null
-  const isAuthenticated = userToken !== undefined
   
+  const decodedUser = userToken ? userToken : null
+  const isAuthenticated = userToken !== undefined
+ 
   return (
     <AuthContext.Provider
       value={{
@@ -22,3 +21,5 @@ export const AuthContextProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export { AuthContext, AuthContextProvider}
